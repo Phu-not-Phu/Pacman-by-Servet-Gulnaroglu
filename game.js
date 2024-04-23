@@ -26,6 +26,7 @@ let ghosts = [];
 let ghostCount = 4;
 let lives = 3;
 let foodCount = 0;
+let foodMax = 0;
 let ghostLocation = [
   { x: 0, y: 0 },
   { x: 176, y: 0 },
@@ -59,6 +60,14 @@ let map = [
   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 ];
 
+for (let i = 0; i < map.length; i++) {
+  for (let j = 0; j < map[0].length; j++) {
+    if (map[i][j] == 2) {
+      foodMax++;
+    }
+  }
+}
+
 let randomTargetsForGhosts = [
   { x: 1 * oneBlockSize, y: 1 * oneBlockSize },
   { x: 1 * oneBlockSize, y: (map.length - 2) * oneBlockSize },
@@ -82,15 +91,35 @@ let update = () => {
     console.log("GAME OVER");
     restartGame();
   }
+
+  checkWin();
+};
+
+let checkWin = () => {
+  if (foodCount == foodMax) {
+    gameWin();
+  }
 };
 
 let restartGame = () => {
   createNewPacman();
   creatGhost();
   lives--;
-  if (lives == 0) {
+
+  if (lives < 0) {
     gameOver();
   }
+};
+
+let gameWin = () => {
+  drawGameWin();
+  clearInterval(gameInterval);
+};
+
+let drawGameWin = () => {
+  canvasContext.font = "50px Emulogic";
+  canvasContext.fillStyle = "white";
+  canvasContext.fillText("Winnnnn!", 150, 200);
 };
 
 let gameOver = () => {
@@ -161,7 +190,7 @@ let draw = () => {
   drawLives();
 };
 
-let gameInterval = setInterval(gameLoop, 1000 / fps);
+
 
 let drawWalls = () => {
   for (let i = 0; i < map.length; i++) {
@@ -243,6 +272,9 @@ let creatGhost = () => {
     ghosts.push(newGhost);
   }
 };
+
+//---------------------------------PACMAN---------------------------------
+let gameInterval = setInterval(gameLoop, 1000 / fps);
 
 createNewPacman();
 creatGhost();
